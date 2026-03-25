@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-# 1. Setup - Variables from Vercel
+# 1. Setup - Variables from Vercel Environment
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 BRAVE_API_KEY = os.getenv("BRAVE_SEARCH_API_KEY")
 PAYMENT_LINK = os.getenv("STRIPE_PAYMENT_LINK")
@@ -22,17 +22,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- NEW: Serve Landing Page ---
+# --- Serve Landing Page ---
 @app.get("/", response_class=HTMLResponse)
 async def serve_index():
     """Serves the index.html file from the root directory."""
     try:
-        # Vercel's structure usually places the root files one level up from /api
         index_path = os.path.join(os.getcwd(), "index.html")
         with open(index_path, "r") as f:
             return f.read()
     except FileNotFoundError:
-        return "<h1>Top GUN API Live</h1><p>Index.html not found in root.</p>"
+        return "<h1>Top GUN API Live</h1><p>Check GitHub root for index.html.</p>"
 
 # --- GEO Audit Logic ---
 async def perform_geo_audit(query: str):
@@ -45,9 +44,10 @@ async def perform_geo_audit(query: str):
         score = min(len(results) * 15, 100)
         return {
             "query": query,
-            "visibility_score": score,
+            "visibility_score": f"{score}%",
             "top_citations": [r.get("url") for r in results[:3]],
-            "engine": "Top GUN v1.0"
+            "engine": "Top GUN v1.0",
+            "status": "Verified Paid"
         }
 
 @app.get("/api/v1/audit")
@@ -59,13 +59,14 @@ async def geo_audit(query: str, request: Request):
             content={
                 "error": "Payment Required",
                 "amount": 1.50,
-                "payment_url": PAYMENT_LINK
+                "payment_url": PAYMENT_LINK,
+                "instructions": "Include PaymentIntent ID in 'X-Payment-Intent' header."
             }
         )
     try:
         intent = stripe.PaymentIntent.retrieve(payment_intent_id)
         if intent.status != "succeeded":
-            raise HTTPException(status_code=403, detail="Payment not cleared.")
+            raise HTTPException(status_code=403, detail="Payment incomplete.")
         return await perform_geo_audit(query)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid Payment ID")
@@ -75,5 +76,7 @@ async def discovery():
     return {
         "name": "Top GUN GEO-Lens",
         "api_url": f"{BASE_URL}/api/v1/audit",
-        "protocol": "Stripe-MPP"
+        "protocol": "Stripe-MPP",
+        "pricing": "1.50 USD",
+        "lookup_key": "top_gun_audit_v1"
     }

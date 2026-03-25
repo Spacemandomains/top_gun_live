@@ -8,7 +8,7 @@
   "servers": [
     {
       "url": "https://top-gun-live.vercel.app",
-      "description": "Production server for Wilfred L. Lee Jr."
+      "description": "Production server managed by Wilfred L. Lee Jr."
     }
   ],
   "paths": {
@@ -22,7 +22,9 @@
             "in": "query",
             "description": "The brand or topic to audit for LLM visibility",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -34,7 +36,8 @@
                   "type": "object",
                   "properties": {
                     "visibility_score": { "type": "string" },
-                    "top_citations": { "type": "array", "items": { "type": "string" } }
+                    "top_citations": { "type": "array", "items": { "type": "string" } },
+                    "llm_index_status": { "type": "string" }
                   }
                 }
               }

@@ -1,9 +1,10 @@
 {
   "version": 2,
   "rewrites": [
+    { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/api/(.*)", "destination": "/api/main.py" },
     { "source": "/ai-agents.json", "destination": "/api/main.py" },
+    { "source": "/openapi.json", "destination": "/api/main.py" },
     { "source": "/(.*)", "destination": "/index.html" }
-    { "source": "/privacy", "destination": "/privacy.html" }
   ]
 }

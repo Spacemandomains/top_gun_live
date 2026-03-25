@@ -1,6 +1,7 @@
 import os
 import httpx
 import stripe
+import json  # Added to handle the openapi.json file
 from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,16 +23,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# --- NEW: Host the OpenAPI Spec for Agents ---
+@app.get("/openapi.json")
+async def get_openapi():
+    """Serves the manual that tells AI agents how to use this API."""
+    try:
+        spec_path = os.path.join(os.getcwd(), "openapi.json")
+        with open(spec_path, "r") as f:
+            return JSONResponse(content=json.load(f))
+    except FileNotFoundError:
+        return JSONResponse(status_code=404, content={"error": "openapi.json not found in root."})
+
 # --- Serve Landing Page ---
 @app.get("/", response_class=HTMLResponse)
 async def serve_index():
-    """Serves the index.html file from the root directory."""
     try:
         index_path = os.path.join(os.getcwd(), "index.html")
         with open(index_path, "r") as f:
             return f.read()
     except FileNotFoundError:
-        return "<h1>Top GUN API Live</h1><p>Check GitHub root for index.html.</p>"
+        return "<h1>Top GUN API Live</h1>"
 
 # --- GEO Audit Logic ---
 async def perform_geo_audit(query: str):
@@ -46,8 +57,7 @@ async def perform_geo_audit(query: str):
             "query": query,
             "visibility_score": f"{score}%",
             "top_citations": [r.get("url") for r in results[:3]],
-            "engine": "Top GUN v1.0",
-            "status": "Verified Paid"
+            "engine": "Top GUN v1.0"
         }
 
 @app.get("/api/v1/audit")
@@ -59,8 +69,7 @@ async def geo_audit(query: str, request: Request):
             content={
                 "error": "Payment Required",
                 "amount": 1.50,
-                "payment_url": PAYMENT_LINK,
-                "instructions": "Include PaymentIntent ID in 'X-Payment-Intent' header."
+                "payment_url": PAYMENT_LINK
             }
         )
     try:
@@ -76,7 +85,5 @@ async def discovery():
     return {
         "name": "Top GUN GEO-Lens",
         "api_url": f"{BASE_URL}/api/v1/audit",
-        "protocol": "Stripe-MPP",
-        "pricing": "1.50 USD",
-        "lookup_key": "top_gun_audit_v1"
+        "protocol": "Stripe-MPP"
     }

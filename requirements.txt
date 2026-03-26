@@ -3,3 +3,5 @@ uvicorn
 stripe
 httpx
 python-dotenv
+mcp[cli]
+httpx

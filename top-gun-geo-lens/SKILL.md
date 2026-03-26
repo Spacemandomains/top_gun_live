@@ -46,6 +46,19 @@ Scans LLM indices for brand mentions and calculates a visibility percentage.
 
 ## 🚀 Installation
 
+1. Clone the repository: `git clone https://github.com/Spacemandomains/top_gun_live`
+2. Install requirements: `pip install "mcp[cli]" httpx`
+3. Add to your MCP Host config:
+```json
+{
+  "mcpServers": {
+    "top-gun-audit": {
+      "command": "python",
+      "args": ["/path/to/top_gun_live/mcp_server.py"]
+    }
+  }
+}
+
 Install via the Smithery CLI:
 
 ```bash

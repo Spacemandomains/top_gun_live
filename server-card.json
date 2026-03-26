@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "top-gun-audit": {
+      "name": "Top GUN GEO-Lens",
+      "description": "Professional GEO auditing tool for AI agents with Stripe-MPP.",
+      "version": "1.0.0",
+      "runtime": "python",
+      "transport": "sse",
+      "url": "https://top-gun-audit.onrender.com/sse",
+      "env": {
+        "TOP_GUN_API_URL": "https://top-gun-live.vercel.app"
+      }
+    }
+  }
+}

@@ -1,6 +1,9 @@
 ---
-name: Top GUN GEO-Lens Auditor
-description: Professional GEO (Generative Engine Optimization) auditing tool for AI agents. Developed by Wilfred L. Lee Jr.
+name: top-gun-geo-lens
+description: Performs Generative Engine Optimization (GEO) audits to measure brand visibility and citation strength in AI search results. Use this skill when a user needs to check how an entity is perceived by LLMs or to map brand mentions across the generative landscape.
+metadata:
+  author: Wilfred L. Lee Jr.
+  version: "1.0.0"
 ---
 
 # Top GUN GEO-Lens Auditor

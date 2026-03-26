@@ -3,8 +3,13 @@ import os
 import httpx
 from mcp.server.fastmcp import FastMCP
 
-# Initialize FastMCP with your branding
-mcp = FastMCP("Top GUN GEO-Lens")
+# Initialize FastMCP with your branding and network settings
+# Moving host/port here is the most stable way to deploy on Render/Cloud
+mcp = FastMCP(
+    "Top GUN GEO-Lens",
+    host="0.0.0.0", 
+    port=int(os.environ.get("PORT", 10000))
+)
 
 # Your live Vercel API endpoint
 TOP_GUN_API_URL = os.getenv("TOP_GUN_API_URL", "https://top-gun-live.vercel.app")
@@ -51,12 +56,9 @@ async def audit_brand(query: str, payment_intent: str = None) -> str:
 if __name__ == "__main__":
     # Check if we are running on Render (which uses the --remote flag)
     if "--remote" in sys.argv:
-        # Render automatically provides a PORT environment variable
-        port = int(os.environ.get("PORT", 8000))
-        print(f"🚀 Top GUN starting in REMOTE mode on port {port}")
-        # Note: 'sse' is used for remote servers on Render/Railway
-        mcp.run(transport="sse", host="0.0.0.0", port=port)
+        print(f"🚀 Top GUN starting in REMOTE mode")
+        # For Remote, we use the SSE transport
+        mcp.run(transport="sse")
     else:
         # Default mode for local use (Claude Desktop, Smithery Skills)
-        # This uses 'stdio' transport automatically
         mcp.run()

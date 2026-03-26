@@ -2,14 +2,29 @@ import sys
 import os
 import httpx
 from mcp.server.fastmcp import FastMCP
+from starlette.middleware.base import BaseHTTPMiddleware
 
-# Initialize FastMCP with the 'stateless_http' flag to fix Smithery 405 errors
+# 1. Define the 'No Buffer' Middleware
+# This tells Render/Nginx to stream data immediately, fixing 502/504 errors
+class NoBufferMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        # Force the proxy to pass the stream through without waiting
+        response.headers["X-Accel-Buffering"] = "no"
+        response.headers["Cache-Control"] = "no-cache, no-transform"
+        response.headers["Connection"] = "keep-alive"
+        return response
+
+# 2. Initialize FastMCP with specialized settings for Smithery/Render
 mcp = FastMCP(
     "Top GUN GEO-Lens",
     host="0.0.0.0", 
     port=int(os.environ.get("PORT", 10000)),
-    stateless_http=True  # Allows Smithery/Directories to scan your tools via standard HTTP
+    stateless_http=True  # Enables standard HTTP discovery for Smithery
 )
+
+# 3. Apply the Middleware to the MCP server
+mcp.add_middleware(NoBufferMiddleware)
 
 # Your live Vercel API endpoint
 TOP_GUN_API_URL = os.getenv("TOP_GUN_API_URL", "https://top-gun-live.vercel.app")
@@ -22,7 +37,7 @@ async def audit_brand(query: str, payment_intent: str = None) -> str:
     """
     headers = {"Content-Type": "application/json"}
     
-    # If the user provides a Session ID, pass it to the Vercel API to unlock data
+    # Pass the Session ID to the Vercel API if provided by the user
     if payment_intent:
         headers["X-Payment-Intent"] = payment_intent
 
@@ -54,11 +69,11 @@ async def audit_brand(query: str, payment_intent: str = None) -> str:
             return f"Error connecting to Top GUN API: {str(e)}"
 
 if __name__ == "__main__":
-    # Check if we are running on Render (which uses the --remote flag)
+    # Check if we are running on Render (using the --remote flag)
     if "--remote" in sys.argv:
-        print(f"🚀 Top GUN starting in REMOTE mode")
-        # For Remote, we use the SSE transport
+        print(f"🚀 Top GUN starting in REMOTE mode on port {os.environ.get('PORT', 10000)}")
+        # Use SSE transport for the remote server
         mcp.run(transport="sse")
     else:
-        # Default mode for local use (Claude Desktop, Smithery Skills)
+        # Default mode for local use (stdio)
         mcp.run()

@@ -1,0 +1,8 @@
+# smithery.yaml
+name: top-gun-audit
+author: Wilfred L. Lee Jr.
+description: Professional GEO auditing tool with Stripe-MPP payment gate.
+version: 1.0.0
+runtime: python
+install: pip install "mcp[cli]" httpx
+start: python mcp_server.py

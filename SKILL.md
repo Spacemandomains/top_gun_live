@@ -1,7 +1,11 @@
+---
+name: Top GUN GEO-Lens Auditor
+description: Professional GEO (Generative Engine Optimization) auditing tool for AI agents. Developed by Wilfred L. Lee Jr.
+---
+
 # Top GUN GEO-Lens Auditor
 
 **Developer:** Wilfred L. Lee Jr.  
-**Version:** 1.0.0  
 **Protocol:** Stripe-MPP (Machine-Payable Protocol)
 
 ## 🎯 Overview
@@ -27,4 +31,4 @@ This is a **metered agentic service**. Each audit requires a flat fee of **$1.50
 Install via the Smithery CLI:
 
 ```bash
-npx -y @smithery/cli install top-gun-geo-lens
+npx -y @smithery/cli install @wilfred-l-lee-jr/top-gun-geo-lens

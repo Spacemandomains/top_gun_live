@@ -3,12 +3,12 @@ import os
 import httpx
 from mcp.server.fastmcp import FastMCP
 
-# Initialize FastMCP with your branding and network settings
-# Moving host/port here is the most stable way to deploy on Render/Cloud
+# Initialize FastMCP with the 'stateless_http' flag to fix Smithery 405 errors
 mcp = FastMCP(
     "Top GUN GEO-Lens",
     host="0.0.0.0", 
-    port=int(os.environ.get("PORT", 10000))
+    port=int(os.environ.get("PORT", 10000)),
+    stateless_http=True  # Allows Smithery/Directories to scan your tools via standard HTTP
 )
 
 # Your live Vercel API endpoint

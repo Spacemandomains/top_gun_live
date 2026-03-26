@@ -37,7 +37,8 @@
                   "properties": {
                     "visibility_score": { "type": "string" },
                     "top_citations": { "type": "array", "items": { "type": "string" } },
-                    "llm_index_status": { "type": "string" }
+                    "llm_index_status": { "type": "string" },
+                    "provider": { "type": "string" }
                   }
                 }
               }

@@ -1,6 +1,7 @@
 {
   "version": 2,
   "rewrites": [
+    { "source": "/mcp/(.*)", "destination": "/api/main.py" },
     { "source": "/api/(.*)", "destination": "/api/main.py" },
     { "source": "/ai-agents.json", "destination": "/api/main.py" },
     { "source": "/openapi.json", "destination": "/api/main.py" },

@@ -5,6 +5,8 @@ import json
 from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+
+# --- MCP Imports ---
 from mcp.server.fastapi import FastApiServerTransport
 from mcp.server import Server
 from mcp.types import Tool, TextContent
@@ -66,19 +68,19 @@ async def handle_call_tool(name: str, arguments: dict):
     
     raise ValueError(f"Tool not found: {name}")
 
-# Initialize the Transport (the bridge between MCP and FastAPI)
+# --- MCP Option A: Using url_prefix ---
+# This prefix automatically adds "/mcp" to the routes below
 mcp_transport = FastApiServerTransport(mcp_server, url_prefix="/mcp")
 
-# --- MCP Connection Endpoints ---
-@app.get("/mcp/sse")
+@app.get("/sse")
 async def sse_endpoint(request: Request):
-    """The entry point for xpay.sh to start an SSE connection."""
+    """The entry point for xpay.sh. Final URL: /mcp/sse"""
     async with mcp_transport.connect_sse(request.scope, request.receive, request._send) as sse:
         await sse.handle_sse_event()
 
-@app.post("/mcp/messages")
+@app.post("/messages")
 async def messages_endpoint(request: Request):
-    """Where the JSON-RPC messages are sent back and forth."""
+    """Where JSON-RPC messages are handled. Final URL: /mcp/messages"""
     await mcp_transport.handle_post_message(request.scope, request.receive, request._send)
 
 # --- Helper: File Loader ---

@@ -33,3 +33,5 @@ By calling this API, the requesting entity agrees to the **Terms of Engagement**
 - Digital data delivery is final.
 - No refunds for autonomous transactions.
 - Data is provided 'as-is' based on real-time generative engine scraping.
+
+- [![smithery badge](https://smithery.ai/badge/wilfred-l-lee-jr/top-gun-audit)](https://smithery.ai/servers/wilfred-l-lee-jr/top-gun-audit)
